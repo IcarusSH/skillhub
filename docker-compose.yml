@@ -16,7 +16,7 @@ services:
   postgres:
     image: ${POSTGRES_IMAGE:-postgres:16-alpine}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_DB: skillhub
       POSTGRES_USER: skillhub
