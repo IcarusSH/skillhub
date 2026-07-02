@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Eye, EyeOff } from 'lucide-react'
 import { getDirectAuthRuntimeConfig } from '@/api/client'
+import { DingTalkLoginButton } from '@/features/auth/dingtalk-login-button'
 import { LoginButton } from '@/features/auth/login-button'
 import { SessionBootstrapEntry } from '@/features/auth/session-bootstrap-entry'
 import { useAuthMethods } from '@/features/auth/use-auth-methods'
@@ -36,6 +37,8 @@ export function LoginPage() {
     ? authMethods?.find((method) =>
       method.methodType === 'DIRECT_PASSWORD' && method.provider === directAuthConfig.provider)
     : undefined
+  const dingtalkMethod = authMethods?.find((method) =>
+    method.methodType === 'DIRECT_PASSWORD' && method.provider === 'dingtalk')
   const bootstrapMethod = authMethods?.find((method) => method.methodType === 'SESSION_BOOTSTRAP')
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -184,6 +187,7 @@ export function LoginPage() {
                   {t('login.oauthHint')}
                 </p>
                 <LoginButton returnTo={returnTo} />
+                {dingtalkMethod ? <DingTalkLoginButton /> : null}
               </TabsContent>
             </Tabs>
           </div>

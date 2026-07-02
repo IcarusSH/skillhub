@@ -1252,7 +1252,16 @@
   },
   "loginButton": {
     "loading": "加载中...",
-    "loginWith": "使用 {{name}} 登录"
+    "loginWith": "使用 {{name}} 登录",
+    "dingtalk": "使用钉钉登录"
+  },
+  "dingtalkCallback": {
+    "title": "正在用钉钉登录",
+    "pending": "正在与钉钉校验身份...",
+    "redirecting": "登录成功，正在跳转...",
+    "missingCode": "钉钉回调未返回 authCode，请重新扫码。",
+    "stateMismatch": "钉钉 state 校验未通过，请重试。",
+    "retry": "返回登录"
   },
   "ratingInput": {
     "yourRating": "你的评分: {{score}} 星"

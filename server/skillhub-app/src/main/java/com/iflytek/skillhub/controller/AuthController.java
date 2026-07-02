@@ -164,22 +164,29 @@ public class AuthController extends BaseApiController {
                                                    HttpServletRequest httpRequest) {
         String category = "direct:" + request.provider();
         String clientIp = resolveClientIp(httpRequest);
-        authFailureThrottleService.assertAllowed(category, request.username(), clientIp);
+        // Throttle on username for password providers; use authCode hash for token-based providers
+        // (no PII leakage to logs; authCode itself is opaque and short-lived).
+        String throttleIdentifier = request.username() != null
+                ? request.username()
+                : (request.authCode() != null ? "authcode:" + request.authCode().hashCode() : "anonymous");
+        authFailureThrottleService.assertAllowed(category, throttleIdentifier, clientIp);
         PlatformPrincipal principal;
         try {
             principal = directAuthService.authenticate(
                     request.provider(),
                     request.username(),
                     request.password(),
+                    request.authCode(),
+                    request.extraParams(),
                     httpRequest
             );
         } catch (AuthFlowException ex) {
             if (HttpStatus.UNAUTHORIZED.equals(ex.getStatus())) {
-                authFailureThrottleService.recordFailure(category, request.username(), clientIp);
+                authFailureThrottleService.recordFailure(category, throttleIdentifier, clientIp);
             }
             throw ex;
         }
-        authFailureThrottleService.resetIdentifier(category, request.username());
+        authFailureThrottleService.resetIdentifier(category, throttleIdentifier);
         return ok(
             "response.success.read",
             authMeResponseAssembler.from(principal)

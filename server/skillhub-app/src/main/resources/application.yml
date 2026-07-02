@@ -50,6 +50,9 @@ spring:
     oauth2:
       client:
         registration:
+          # GitHub login retained by default; remove the whole `github` block to
+          # disable. GitLab is disabled in this fork — providers left intact in
+          # code (GitLabClaimsExtractor.java) for re-enablement if needed.
           github:
             client-id: ${OAUTH2_GITHUB_CLIENT_ID:placeholder}
             client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET:placeholder}
@@ -59,23 +62,10 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-name: GitHub
             authorization-grant-type: authorization_code
-          gitlab:
-            client-id: ${OAUTH2_GITLAB_CLIENT_ID:placeholder}
-            client-secret: ${OAUTH2_GITLAB_CLIENT_SECRET:placeholder}
-            scope:
-              - read_user
-              - email
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            client-name: ${OAUTH2_GITLAB_DISPLAY_NAME:GitLab}
+          # gitlab: intentionally not registered — see docs for migration notes.
         provider:
           github:
             user-info-uri: https://api.github.com/user
-          gitlab:
-            authorization-uri: ${OAUTH2_GITLAB_BASE_URI:https://gitlab.com}/oauth/authorize
-            token-uri: ${OAUTH2_GITLAB_BASE_URI:https://gitlab.com}/oauth/token
-            user-info-uri: ${OAUTH2_GITLAB_BASE_URI:https://gitlab.com}/api/v4/user
-            user-name-attribute: username
   servlet:
     multipart:
       max-file-size: 100MB
@@ -100,6 +90,12 @@ skillhub:
       enabled: ${SKILLHUB_AUTH_MOCK_ENABLED:false}
     direct:
       enabled: ${SKILLHUB_AUTH_DIRECT_ENABLED:false}
+      dingtalk:
+        enabled: ${SKILLHUB_AUTH_DIRECT_DINGTALK_ENABLED:false}
+        app-key: ${SKILLHUB_AUTH_DIRECT_DINGTALK_APP_KEY:}
+        app-secret: ${SKILLHUB_AUTH_DIRECT_DINGTALK_APP_SECRET:}
+        base-url: ${SKILLHUB_AUTH_DIRECT_DINGTALK_BASE_URL:https://api.dingtalk.com}
+        request-timeout-ms: ${SKILLHUB_AUTH_DIRECT_DINGTALK_TIMEOUT_MS:5000}
     session-bootstrap:
       enabled: ${SKILLHUB_AUTH_SESSION_BOOTSTRAP_ENABLED:false}
     password-reset:

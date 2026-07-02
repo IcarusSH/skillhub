@@ -1251,7 +1251,16 @@
   },
   "loginButton": {
     "loading": "Loading...",
-    "loginWith": "Login with {{name}}"
+    "loginWith": "Login with {{name}}",
+    "dingtalk": "Login with DingTalk"
+  },
+  "dingtalkCallback": {
+    "title": "Signing you in with DingTalk",
+    "pending": "Verifying with DingTalk...",
+    "redirecting": "Signed in, redirecting...",
+    "missingCode": "The DingTalk callback did not include an authCode.",
+    "stateMismatch": "The DingTalk state token did not match. Please try again.",
+    "retry": "Back to login"
   },
   "ratingInput": {
     "yourRating": "Your rating: {{score}} stars"
