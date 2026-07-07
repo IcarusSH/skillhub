@@ -1,6 +1,5 @@
 package com.iflytek.skillhub;
 
-import com.iflytek.skillhub.auth.direct.dingtalk.DingTalkProperties;
 import com.iflytek.skillhub.bootstrap.BuiltinSkillProperties;
 import com.iflytek.skillhub.config.ProfileFieldPolicyProperties;
 import com.iflytek.skillhub.config.ProfileModerationProperties;
@@ -15,8 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties({
         BuiltinSkillProperties.class,
         ProfileModerationProperties.class,
-        ProfileFieldPolicyProperties.class,
-        DingTalkProperties.class
+        ProfileFieldPolicyProperties.class
 })
 public class SkillhubApplication {
     public static void main(String[] args) {

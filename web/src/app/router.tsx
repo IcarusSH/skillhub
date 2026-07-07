@@ -64,10 +64,6 @@ function createRoleProtectedRouteComponent<TModule extends Record<string, unknow
 const LandingPage = createLazyRouteComponent(() => import('@/pages/landing'), 'LandingPage')
 const HomePage = createLazyRouteComponent(() => import('@/pages/home'), 'HomePage')
 const LoginPage = createLazyRouteComponent(() => import('@/pages/login'), 'LoginPage')
-const DingTalkCallbackPage = createLazyRouteComponent(
-  () => import('@/pages/auth/dingtalk-callback'),
-  'DingTalkCallbackPage'
-)
 const RegisterPage = createLazyRouteComponent(() => import('@/pages/register'), 'RegisterPage')
 const ResetPasswordPage = createLazyRouteComponent(() => import('@/pages/reset-password'), 'ResetPasswordPage')
 const PrivacyPolicyPage = createLazyRouteComponent(() => import('@/pages/privacy'), 'PrivacyPolicyPage')
@@ -185,21 +181,6 @@ const registerRoute = createRoute({
     returnTo: typeof search.returnTo === 'string' ? search.returnTo : '',
   }),
   component: RegisterPage,
-})
-
-const dingtalkCallbackRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: 'auth/dingtalk/callback',
-  validateSearch: (search: Record<string, unknown>): {
-    code?: string
-    state?: string
-    returnTo?: string
-  } => ({
-    code: typeof search.code === 'string' ? search.code : undefined,
-    state: typeof search.state === 'string' ? search.state : undefined,
-    returnTo: typeof search.returnTo === 'string' ? search.returnTo : undefined,
-  }),
-  component: DingTalkCallbackPage,
 })
 
 const resetPasswordRoute = createRoute({
@@ -458,7 +439,6 @@ const routeTree = rootRoute.addChildren([
   skillsRoute,
   loginRoute,
   registerRoute,
-  dingtalkCallbackRoute,
   resetPasswordRoute,
   privacyRoute,
   searchRoute,

@@ -49,8 +49,8 @@
       "downloads": "下载量",
       "teams": "团队"
     },
-    "whySkillHub": {
-      "title": "为什么选择 SkillHub",
+    "whyZDSkillHub": {
+      "title": "为什么选择 ZDSkillHub",
       "subtitle": "专为企业打造的私有化 Agent 技能管理平台"
     },
     "badge": "企业级技能注册中心",
@@ -92,7 +92,7 @@
     "ctaTitle": "准备好开始了吗？",
     "ctaDescription": "一条命令即可启动本地开发环境，体验完整的技能管理流程",
     "ctaButton": "立即体验",
-    "footerLicense": "© 2026 SkillHub。Apache License 2.0。",
+    "footerLicense": "© 2026 ZDSkillHub。Apache License 2.0。",
     "footerDocs": "文档",
     "footerGithub": "GitHub",
     "footerCommunity": "社区",
@@ -107,13 +107,13 @@
         "cli": "CLI"
       },
       "cli": {
-        "description": "安装 SkillHub CLI 到本地，后续可运行 skillhub install 安装技能",
+        "description": "安装 ZDSkillHub CLI 到本地，后续可运行 skillhub install 安装技能",
         "command": "npm i -g @astron-team/skillhub"
       },
       "agent": {
-        "description": "发送提示词给你的 Agent，以设置SkillHub Registry",
-        "command": "阅读 https://www.example.com/registry/skill.md，并按照说明完成 SkillHub Skills Registry 的配置",
-        "commandTemplate": "阅读 {{url}}，并按照说明完成 SkillHub Skills Registry 的配置"
+        "description": "发送提示词给你的 Agent，以设置ZDSkillHub Registry",
+        "command": "阅读 https://www.example.com/registry/skill.md，并按照说明完成 ZDSkillHub Skills Registry 的配置",
+        "commandTemplate": "阅读 {{url}}，并按照说明完成 ZDSkillHub Skills Registry 的配置"
       },
       "human": {
         "description": "使用CLI工具安装Skills",
@@ -122,7 +122,7 @@
       "steps": {
         "configureEnv": {
           "title": "1. 配置环境变量",
-          "description": "设置 ClawHub CLI 连接到 SkillHub"
+          "description": "设置 ClawHub CLI 连接到 ZDSkillHub"
         },
         "installSkills": {
           "title": "2. 安装技能",
@@ -150,12 +150,12 @@
     "quickStart": {
       "title": "快速开始",
       "subtitle": "Quick Start",
-      "description": "只需几个简单步骤，即可开始使用 SkillHub",
+      "description": "只需几个简单步骤，即可开始使用 ZDSkillHub",
       "tip": "💡 提示：访问技能详情页可获取带环境变量的一键复制安装命令",
       "steps": {
         "configureEnv": {
           "title": "1. 配置环境变量",
-          "description": "设置 ClawHub CLI 连接到 SkillHub"
+          "description": "设置 ClawHub CLI 连接到 ZDSkillHub"
         },
         "installSkills": {
           "title": "2. 安装技能",
@@ -201,7 +201,7 @@
     "clear": "清空搜索"
   },
   "login": {
-    "title": "登录 SkillHub",
+    "title": "登录 ZDSkillHub",
     "subtitle": "选择一个方式登录以继续",
     "tabPassword": "账号密码",
     "tabOAuth": "OAuth",
@@ -221,7 +221,7 @@
     "oauthHint": "使用 OAuth 登录时，认证完成后会自动返回当前站点。",
     "passwordCompatHint": "当前部署已启用账号密码兼容接入层。表单将路由到 {{name}}，而不是固定使用本地账号接口。",
     "enterpriseSsoTitle": "企业单点登录",
-    "enterpriseSsoHint": "当前部署已启用兼容接入层。若浏览器中已存在 {{name}} 会话，可直接尝试建立 SkillHub 登录态。",
+    "enterpriseSsoHint": "当前部署已启用兼容接入层。若浏览器中已存在 {{name}} 会话，可直接尝试建立 ZDSkillHub 登录态。",
     "enterpriseSsoAutoHint": "当前部署已启用自动 {{name}} 探测。若未成功，你仍可继续使用现有登录方式。",
     "enterpriseSsoAction": "尝试 {{name}} 登录",
     "enterpriseSsoSubmitting": "正在尝试 {{name}} 登录...",
@@ -829,7 +829,7 @@
     "loginToRate": "登录后可以收藏和评分",
     "install": "安装",
     "installMethodClawhub": "ClawHub CLI",
-    "installMethodSkillhub": "SkillHub CLI",
+    "installMethodSkillhub": "ZDSkillHub CLI",
     "download": "下载",
     "labelsSectionTitle": "标签管理",
     "labelsSectionDescription": "为这个技能挂载或移除推荐标签，帮助用户筛选和发现。",
@@ -1252,16 +1252,7 @@
   },
   "loginButton": {
     "loading": "加载中...",
-    "loginWith": "使用 {{name}} 登录",
-    "dingtalk": "使用钉钉登录"
-  },
-  "dingtalkCallback": {
-    "title": "正在用钉钉登录",
-    "pending": "正在与钉钉校验身份...",
-    "redirecting": "登录成功，正在跳转...",
-    "missingCode": "钉钉回调未返回 authCode，请重新扫码。",
-    "stateMismatch": "钉钉 state 校验未通过，请重试。",
-    "retry": "返回登录"
+    "loginWith": "使用 {{name}} 登录"
   },
   "ratingInput": {
     "yourRating": "你的评分: {{score}} 星"
@@ -1347,11 +1338,11 @@
     "community": "社区",
     "privacy": "隐私政策",
     "terms": "服务条款",
-    "copyright": "© 2026 SkillHub. 保留所有权利。"
+    "copyright": "© 2026 ZDSkillHub. 保留所有权利。"
   },
   "publish": {
     "title": "发布技能",
-    "subtitle": "上传技能包到 SkillHub",
+    "subtitle": "上传技能包到 ZDSkillHub",
     "reviewNotice": {
       "title": "发布审核说明",
       "description": "技能包提交后需要经过管理员审核才能正式发布。"

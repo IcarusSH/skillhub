@@ -50,9 +50,9 @@ spring:
     oauth2:
       client:
         registration:
-          # GitHub login retained by default; remove the whole `github` block to
-          # disable. GitLab is disabled in this fork — providers left intact in
-          # code (GitLabClaimsExtractor.java) for re-enablement if needed.
+          # GitHub login retained by default; remove the whole `github` block
+          # to disable. GitLab is disabled in this fork — providers left intact
+          # in code (GitLabClaimsExtractor.java) for re-enablement if needed.
           github:
             client-id: ${OAUTH2_GITHUB_CLIENT_ID:placeholder}
             client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET:placeholder}
@@ -62,10 +62,32 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-name: GitHub
             authorization-grant-type: authorization_code
-          # gitlab: intentionally not registered — see docs for migration notes.
+          # Casdoor is an OIDC-compatible IdP that fronts DingTalk in this
+          # deployment. The application URL on the Casdoor side must be
+          # configured to use this exact redirect URI, otherwise the
+          # authorization-code exchange will fail.
+          casdoor:
+            client-id: ${CASDOOR_CLIENT_ID:placeholder}
+            client-secret: ${CASDOOR_CLIENT_SECRET:placeholder}
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: Casdoor
+            authorization-grant-type: authorization_code
         provider:
           github:
             user-info-uri: https://api.github.com/user
+          casdoor:
+            # Casdoor's authorization endpoint follows the standard OAuth2
+            # path but its token + userinfo endpoints are non-standard; we
+            # therefore spell them out explicitly instead of relying on
+            # Spring Security's CommonOAuth2Provider defaults.
+            authorization-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/login/oauth/authorize
+            token-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/login/oauth/access_token
+            user-info-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/userinfo
+            user-name-attribute: sub
   servlet:
     multipart:
       max-file-size: 100MB
@@ -90,12 +112,6 @@ skillhub:
       enabled: ${SKILLHUB_AUTH_MOCK_ENABLED:false}
     direct:
       enabled: ${SKILLHUB_AUTH_DIRECT_ENABLED:false}
-      dingtalk:
-        enabled: ${SKILLHUB_AUTH_DIRECT_DINGTALK_ENABLED:false}
-        app-key: ${SKILLHUB_AUTH_DIRECT_DINGTALK_APP_KEY:}
-        app-secret: ${SKILLHUB_AUTH_DIRECT_DINGTALK_APP_SECRET:}
-        base-url: ${SKILLHUB_AUTH_DIRECT_DINGTALK_BASE_URL:https://api.dingtalk.com}
-        request-timeout-ms: ${SKILLHUB_AUTH_DIRECT_DINGTALK_TIMEOUT_MS:5000}
     session-bootstrap:
       enabled: ${SKILLHUB_AUTH_SESSION_BOOTSTRAP_ENABLED:false}
     password-reset:

@@ -66,10 +66,6 @@ type RuntimeConfig = {
   authSessionBootstrapEnabled?: string
   authSessionBootstrapProvider?: string
   authSessionBootstrapAuto?: string
-  authDingtalkEnabled?: string
-  authDingtalkAppId?: string
-  authDingtalkProvider?: string
-  authDingtalkRedirectPath?: string
 }
 
 declare global {
@@ -151,19 +147,6 @@ export type DirectAuthRuntimeConfig = {
   provider?: string
 }
 
-/**
- * Runtime configuration for the optional DingTalk scan-code direct-login
- * provider. Mirrors the backend {@code skillhub.auth.direct.dingtalk}
- * section; both must be enabled for the front-end button to render.
- */
-export type DingTalkRuntimeConfig = {
-  enabled: boolean
-  appId?: string
-  /** Path on the same origin that will receive the authCode. */
-  redirectPath: string
-  provider: string
-}
-
 export function getDirectAuthRuntimeConfig(): DirectAuthRuntimeConfig {
   const config = getRuntimeConfig()
   const provider = config.authDirectProvider?.trim()
@@ -180,23 +163,6 @@ export function getSessionBootstrapRuntimeConfig(): SessionBootstrapRuntimeConfi
     enabled: parseBooleanFlag(config.authSessionBootstrapEnabled) && !!provider,
     provider: provider || undefined,
     auto: parseBooleanFlag(config.authSessionBootstrapAuto),
-  }
-}
-
-export function getDingTalkRuntimeConfig(): DingTalkRuntimeConfig {
-  const config = getRuntimeConfig()
-  const enabledFlag = parseBooleanFlag(config.authDingtalkEnabled)
-  const rawAppId = (config.authDingtalkAppId ?? '').trim()
-  // The runtime-config.js.template substitutes unset env vars with the literal
-  // string "undefined"; reject that placeholder as well as empty strings.
-  const appId = rawAppId && rawAppId !== 'undefined' ? rawAppId : undefined
-  const provider = (config.authDingtalkProvider ?? '').trim() || 'dingtalk'
-  return {
-    enabled: enabledFlag && !!appId,
-    appId,
-    provider,
-    redirectPath:
-      (config.authDingtalkRedirectPath ?? '').trim() || '/auth/dingtalk/callback',
   }
 }
 
@@ -444,28 +410,6 @@ export const authApi = {
         provider,
         username: request.username,
         password: request.password,
-      }),
-    })
-  },
-
-  /**
-   * Direct-login flow for SSO scan-code providers that surface an upstream
-   * `authCode` instead of a username/password pair. The DingTalk enterprise
-   * app login is the canonical caller.
-   */
-  async directLoginWithAuthCode(
-    provider: string,
-    payload: { authCode: string; extraParams?: Record<string, string> },
-  ): Promise<User> {
-    return fetchJson<User>('/api/v1/auth/direct/login', {
-      method: 'POST',
-      headers: await ensureCsrfHeaders({
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify({
-        provider,
-        authCode: payload.authCode,
-        extraParams: payload.extraParams ?? {},
       }),
     })
   },
