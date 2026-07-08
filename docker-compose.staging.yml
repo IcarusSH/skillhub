@@ -42,6 +42,10 @@ services:
       BOOTSTRAP_ADMIN_EMAIL: admin@skillhub.local
       OAUTH2_GITHUB_CLIENT_ID: local-placeholder
       OAUTH2_GITHUB_CLIENT_SECRET: local-placeholder
+      # Casdoor OIDC client (fronts DingTalk / other social IdPs).
+      CASDOOR_SERVER_URL: ${CASDOOR_SERVER_URL}
+      CASDOOR_CLIENT_ID: ${CASDOOR_CLIENT_ID}
+      CASDOOR_CLIENT_SECRET: ${CASDOOR_CLIENT_SECRET}
       SKILLHUB_DOWNLOAD_ANON_COOKIE_SECRET: staging-download-secret-32-bytes
       SKILLHUB_SECURITY_SCANNER_ENABLED: "true"
       SKILLHUB_SECURITY_SCANNER_URL: http://skill-scanner:8000

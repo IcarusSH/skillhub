@@ -90,15 +90,28 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
             throw new OAuth2AuthenticationException(
                     new OAuth2Error("missing_sub", "OIDC sub claim is required", null));
         }
+        // Log the raw claim set so misconfigured OIDC providers (e.g. Casdoor
+        // applications that only emit a bare subject) can be diagnosed without
+        // a debugger. Single INFO line per login.
+        if (log.isInfoEnabled()) {
+            log.info("OIDC claims for registration '{}': {}",
+                    request.getClientRegistration().getRegistrationId(), claims);
+        }
         String email = asString(claims.get("email"));
         boolean emailVerified = Boolean.TRUE.equals(claims.get("email_verified"));
         if (!emailVerified) {
             email = null;
         }
+        // Casdoor emits the user profile under a few different field names
+        // depending on application configuration (displayName, name,
+        // preferred_username, username). We try them in order before falling
+        // back to the email local part and finally the OIDC subject.
         String providerLogin = firstPresent(
-                asString(claims.get("preferred_username")),
+                asString(claims.get("displayName")),
                 asString(claims.get("name")),
-                email,
+                asString(claims.get("preferred_username")),
+                asString(claims.get("username")),
+                emailLocalPart(email),
                 subject
         );
         if (claims.get("picture") != null && claims.get("avatar_url") == null) {
@@ -113,6 +126,14 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
                 providerLogin,
                 claims
         );
+    }
+
+    private static String emailLocalPart(String email) {
+        if (email == null) {
+            return null;
+        }
+        int at = email.indexOf('@');
+        return at > 0 ? email.substring(0, at) : email;
     }
 
     private static String firstPresent(String... values) {

@@ -73,7 +73,13 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            # Hardcode the redirect URI rather than relying on {baseUrl}
+            # because Vite's dev-mode proxy alters the Host header, which
+            # makes Spring's baseUrl resolution differ between the
+            # /oauth2/authorization and /login/oauth2/code steps. The value
+            # below MUST be added verbatim to the application's Redirect URLs
+            # list on the Casdoor side.
+            redirect-uri: "http://192.168.1.197:8080/login/oauth2/code/casdoor"
             client-name: Casdoor
             authorization-grant-type: authorization_code
         provider:
@@ -83,10 +89,14 @@ spring:
             # Casdoor's authorization endpoint follows the standard OAuth2
             # path but its token + userinfo endpoints are non-standard; we
             # therefore spell them out explicitly instead of relying on
-            # Spring Security's CommonOAuth2Provider defaults.
+            # Spring Security's CommonOAuth2Provider defaults. jwk-set-uri
+            # is required so Spring Security can verify the id_token
+            # signature during the OIDC code-exchange callback; without it
+            # the login fails with "missing_signature_verifier".
             authorization-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/login/oauth/authorize
             token-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/login/oauth/access_token
             user-info-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/userinfo
+            jwk-set-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/.well-known/jwks
             user-name-attribute: sub
   servlet:
     multipart:

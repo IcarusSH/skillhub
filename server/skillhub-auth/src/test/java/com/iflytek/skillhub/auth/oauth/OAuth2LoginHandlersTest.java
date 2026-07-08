@@ -27,7 +27,8 @@ class OAuth2LoginHandlersTest {
         OAuthLoginFlowService oauthLoginFlowService = mock(OAuthLoginFlowService.class);
         OAuth2LoginSuccessHandler handler = new OAuth2LoginSuccessHandler(
                 new com.iflytek.skillhub.auth.session.PlatformSessionService(),
-                oauthLoginFlowService
+                oauthLoginFlowService,
+                "" // no public base url — keep relative redirect
         );
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -76,7 +77,8 @@ class OAuth2LoginHandlersTest {
         OAuthLoginFlowService oauthLoginFlowService = mock(OAuthLoginFlowService.class);
         OAuth2LoginSuccessHandler handler = new OAuth2LoginSuccessHandler(
                 new com.iflytek.skillhub.auth.session.PlatformSessionService(),
-                oauthLoginFlowService
+                oauthLoginFlowService,
+                ""
         );
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
