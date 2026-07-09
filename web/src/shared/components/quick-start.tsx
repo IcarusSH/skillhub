@@ -34,7 +34,7 @@ function CopyButton({ text }: { text: string }) {
       type="button"
       onClick={handleCopy}
       className="ml-4 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-white/10"
-      style={{ color: 'var(--code-url, #CBD5E0)' }}
+      style={{ color: 'var(--code-url, #94A3B8)' }}
       title={copied ? (t('copyButton.copied') || 'Copied') : (t('copyButton.copy') || 'Copy')}
     >
       {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -45,13 +45,13 @@ function CopyButton({ text }: { text: string }) {
 
 function CodeLine({ line }: { line: string }) {
   if (line.startsWith('#')) {
-    return <span style={{ color: 'var(--code-comment, #A0AEC0)' }}>{line}</span>
+    return <span style={{ color: 'var(--code-comment, #7B8FA1)' }}>{line}</span>
   }
   if (line.startsWith('export')) {
     return (
       <>
-        <span style={{ color: 'var(--code-keyword, #5EEAD4)' }}>export</span>
-        <span style={{ color: 'var(--code-url, #CBD5E0)' }}>{line.slice(6)}</span>
+        <span style={{ color: 'var(--code-keyword, #5DADE2)' }}>export</span>
+        <span style={{ color: 'var(--code-url, #94A3B8)' }}>{line.slice(6)}</span>
       </>
     )
   }
@@ -59,15 +59,15 @@ function CodeLine({ line }: { line: string }) {
     const eqIdx = line.indexOf('=')
     return (
       <>
-        <span style={{ color: 'var(--code-keyword, #5EEAD4)' }}>{line.slice(0, eqIdx).trim()}</span>
-        <span style={{ color: 'var(--code-url, #CBD5E0)' }}>{` = ${line.slice(eqIdx + 1).trim()}`}</span>
+        <span style={{ color: 'var(--code-keyword, #5DADE2)' }}>{line.slice(0, eqIdx).trim()}</span>
+        <span style={{ color: 'var(--code-url, #94A3B8)' }}>{` = ${line.slice(eqIdx + 1).trim()}`}</span>
       </>
     )
   }
   if (line.startsWith('clawhub')) {
     return (
       <>
-        <span style={{ color: 'var(--code-keyword, #5EEAD4)' }}>clawhub</span>
+        <span style={{ color: 'var(--code-keyword, #5DADE2)' }}>clawhub</span>
         <span>{line.slice(7)}</span>
       </>
     )
@@ -97,7 +97,7 @@ function CodeBlock({ icon, iconBg, iconColor, title, description, code }: CodeBl
           </div>
           <div>
             <div className="text-sm font-medium text-white">{title}</div>
-            <div className="text-xs" style={{ color: 'var(--code-comment, #A0AEC0)' }}>
+            <div className="text-xs" style={{ color: 'var(--code-comment, #7B8FA1)' }}>
               {description}
             </div>
           </div>
@@ -109,7 +109,7 @@ function CodeBlock({ icon, iconBg, iconColor, title, description, code }: CodeBl
           <CopyButton text={code} />
         </div>
       </div>
-      <div className="p-6 font-mono text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--code-url, #CBD5E0)' }}>
+      <div className="p-6 font-mono text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--code-url, #94A3B8)' }}>
         {code.split('\n').map((line, i) => (
           <div key={i}>
             <CodeLine line={line} />
@@ -151,7 +151,7 @@ $env:CLAWHUB_REGISTRY = '${baseUrl}'`
     {
       icon: <Settings className="w-4 h-4" strokeWidth={1.5} />,
       iconBg: 'rgba(94,234,212,0.15)',
-      iconColor: 'var(--code-keyword, #5EEAD4)',
+      iconColor: 'var(--code-keyword, #5DADE2)',
       title: t(`${ns}.quickStart.steps.configureEnv.title`),
       description: t(`${ns}.quickStart.steps.configureEnv.description`),
       code: envCode,

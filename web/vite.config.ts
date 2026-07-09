@@ -43,4 +43,23 @@ export default defineConfig({
       },
     },
   },
+  // vite preview (production-build preview server) needs its own proxy
+  // block because the dev and preview servers are configured separately.
+  // Without these entries an SPA loaded from the preview server would
+  // never reach the backend for /api or /oauth2 requests.
+  preview: {
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/oauth2': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
+  },
 })

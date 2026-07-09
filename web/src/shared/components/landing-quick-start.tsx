@@ -159,7 +159,7 @@ export function LandingQuickStartSection() {
               <div className="overflow-x-auto whitespace-nowrap">
                 <code
                   className="font-mono text-sm md:text-base"
-                  style={{ color: currentTab.id === 'agent' ? '#16A34A' : '#0F172A' }}
+                  style={{ color: currentTab.id === 'agent' ? '#0962B6' : '#1E3A5F' }}
                 >
                   {currentTab.command}
                 </code>

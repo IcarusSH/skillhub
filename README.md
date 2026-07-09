@@ -101,6 +101,136 @@ curl -fsSL https://imageless.oss-cn-beijing.aliyuncs.com/runtime.sh | sh -s -- u
 
 If deployment runs into problems, clear the existing runtime home and retry.
 
+### LAN / Hybrid — single-host dev with Docker dependencies
+
+For an internal deployment where the host machine is reachable on a
+LAN IP (e.g. `192.168.1.197`) and employees open SkillHub in their
+own browsers, run only the dependencies in Docker and the application
+itself as local processes. This stays close to the dev experience
+(no full re-image for every code change) while exposing the app to
+the rest of the office.
+
+**Prerequisites**
+
+- Java 21 in `$JAVA_HOME` (e.g. `/usr/lib/jvm/java-21-openjdk-amd64`)
+- Docker daemon reachable (Docker Desktop, or `docker.sock` exposed)
+- One-time: `pnpm install` inside `web/` and `pnpm run build` to
+  produce `web/dist/` so vite preview can serve static assets
+
+**1 — Start the four dependencies in Docker**
+
+```bash
+# from repo root
+sg docker -c 'docker compose -p skillhub up -d --wait'
+# postgres / redis / minio / skill-scanner all become healthy
+```
+
+**2 — Create `.env` (gitignored) with the Casdoor SSO creds**
+
+```bash
+cp .env.release.example .env   # dev defaults only
+chmod 600 .env
+# Fill in your Casdoor application credentials (see "Casdoor SSO" below):
+sed -i 's|^SKILLHUB_AUTH_DIRECT_DINGTALK_ENABLED=.*|SKILLHUB_AUTH_DIRECT_DINGTALK_ENABLED=false|' .env
+echo 'CASDOOR_SERVER_URL=https://your-casdoor-host'    >> .env
+echo 'CASDOOR_CLIENT_ID=replace-with-casdoor-client-id' >> .env
+echo 'CASDOOR_CLIENT_SECRET=replace-with-casdoor-client-secret' >> .env
+# Frontend origin the OAuth2 success handler uses for the post-login redirect:
+echo 'SKILLHUB_PUBLIC_BASE_URL=http://192.168.1.197:3000' >> .env
+```
+
+**3 — Start the Spring Boot backend**
+
+```bash
+# from repo root
+cd server
+JDK_JAVA_OPTIONS="-XX:+EnableDynamicAgentLoading" ./mvnw \
+    -pl skillhub-app -am package -DskipTests -B -q
+
+# Launch with the dev profile (mock-auth fallback, Postgres on :5433):
+set -a && source ../.env && set +a
+setsid nohup bash -c "exec env \
+    JAVA_HOME=$JAVA_HOME \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/skillhub \
+    SPRING_DATASOURCE_USERNAME=skillhub \
+    SPRING_DATASOURCE_PASSWORD=skillhub_dev \
+    SKILLHUB_SECURITY_SCANNER_ENABLED=true \
+    SKILLHUB_SECURITY_SCANNER_URL=http://localhost:8000 \
+    SKILLHUB_SECURITY_SCANNER_MODE=upload \
+    CASDOOR_CLIENT_ID=\$CASDOOR_CLIENT_ID \
+    CASDOOR_CLIENT_SECRET=\$CASDOOR_CLIENT_SECRET \
+    CASDOOR_SERVER_URL=\$CASDOOR_SERVER_URL \
+    java -jar skillhub-app/target/skillhub-app-0.1.0.jar \
+        --spring.profiles.active=local" \
+    > ../.dev/server.log 2>&1 < /dev/null & disown
+
+# wait until /actuator/health returns UP
+for i in {1..12}; do sleep 5; curl -sf http://localhost:8080/actuator/health && break; done
+```
+
+**4 — Start the frontend (production-build preview)**
+
+```bash
+cd web
+# build once (or whenever the frontend changes):
+pnpm run build            # produces dist/
+# serve the built bundle with proxy /api and /oauth2 → backend on :8080
+setsid nohup pnpm exec vite preview --host 0.0.0.0 --port 3000 --strictPort \
+    > ../.dev/web.log 2>&1 < /dev/null & disown
+```
+
+**5 — Casdoor SSO setup (one-time)**
+
+In your Casdoor organization (e.g. `ZD`), create an OAuth2 application
+named `zdskillhub`. Set the Redirect URLs to:
+
+```
+http://192.168.1.197:8080/login/oauth2/code/casdoor
+http://localhost:8080/login/oauth2/code/casdoor
+```
+
+Copy the issued `client_id` and `client_secret` into `.env`. Keep
+the application's scopes at `openid`, `profile`, `email`. Each
+employee who scans the DingTalk QR code in Casdoor will be auto-
+provisioned in SkillHub on first login.
+
+**6 — Access**
+
+```
+http://192.168.1.197:3000/login
+```
+
+Same-LAN browsers can hit this URL directly. The first navigation to
+`/dashboard` after Casdoor login lands on the SPA via the OAuth2
+success handler redirected to `SKILLHUB_PUBLIC_BASE_URL`.
+
+**Teardown / restart**
+
+```bash
+# Stop everything
+pkill -f "vite preview" && pkill -f "java -jar.*skillhub-app"
+sg docker -c 'docker compose -p skillhub down'
+
+# Restart in order: Docker deps → java backend → vite preview
+sg docker -c 'docker compose -p skillhub up -d --wait'
+# (re-run the java + vite commands above)
+
+# Wipe everything (including dist/, postgres volume):
+sg docker -c 'docker compose -p skillhub down --volumes'
+rm -rf web/dist .env
+```
+
+**Notes**
+
+- `--host 0.0.0.0` on vite preview is mandatory if anyone other than
+  the WSL host needs to reach the UI on the LAN IP. The dev server
+  (`pnpm dev`) defaults to `127.0.0.1`, which is *not* LAN-reachable.
+- If you only need single-user dev, swap `vite preview` for the
+  dev HMR server and skip the `pnpm run build` step.
+- For a full-stack Docker deployment (no local Java/Vite, single
+  artifact per service), use `make staging` — see [Kubernetes](#kubernetes)
+  and the Compose file paths in that section.
+
 ## SkillHub CLI
 
 Install and manage Agent skills from the command line:

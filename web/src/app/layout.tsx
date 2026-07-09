@@ -72,8 +72,11 @@ export function Layout() {
 
       {/* Header */}
       <header className={getAppHeaderClassName(isHeaderElevated)} style={{ borderColor: 'hsl(var(--border))' }}>
-        <Link to="/" className="text-xl font-semibold tracking-tight text-brand-gradient">
-          ZDSkillHub
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/logo.png" alt="ZDSkillHub" className="h-8 w-8 rounded-md shadow-sm" />
+          <span className="text-xl font-semibold tracking-tight text-brand-gradient">
+            ZDSkillHub
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-normal" style={{ color: 'hsl(var(--text-secondary))' }}>
@@ -132,14 +135,12 @@ export function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t rounded-t-2xl mt-auto" style={{ background: '#F1F5F9', borderColor: 'hsl(var(--border))' }}>
+      <footer className="relative z-10 border-t rounded-t-2xl mt-auto" style={{ background: 'hsl(206 60% 96%)', borderColor: 'hsl(var(--border))' }}>
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-10">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 md:gap-12">
             <div className="flex-shrink-0">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm bg-brand-gradient">
-                  S
-                </div>
+                <img src="/logo.png" alt="ZDSkillHub" className="h-9 w-9 rounded-lg shadow-sm" />
                 <span className="text-lg font-bold text-brand-gradient">ZDSkillHub</span>
               </div>
               <p className="text-sm max-w-xs" style={{ color: 'hsl(var(--text-secondary))' }}>
