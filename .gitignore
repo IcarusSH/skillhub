@@ -1,6 +1,10 @@
 # OS files
 .DS_Store
 Thumbs.db
+# Windows NTFS Alternate Data Streams produced when files are downloaded from
+# the internet (e.g. via Edge). These show up as separate files on Linux/macOS
+# via WSL/git for Windows sync and contain Zone metadata, never project content.
+*:Zone.Identifier
 
 # Editors / IDEs / local tooling
 .claude/

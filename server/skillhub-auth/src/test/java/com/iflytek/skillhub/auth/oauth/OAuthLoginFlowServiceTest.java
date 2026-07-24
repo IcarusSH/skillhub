@@ -33,6 +33,26 @@ class OAuthLoginFlowServiceTest {
     }
 
     @Test
+    void rememberReturnTo_clearsSessionWhenParamUnsafe() {
+        OAuthLoginFlowService service = new OAuthLoginFlowService(
+                List.of(),
+                mock(AccessPolicy.class),
+                mock(IdentityBindingService.class)
+        );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession(true).setAttribute(
+                OAuthLoginRedirectSupport.SESSION_RETURN_TO_ATTRIBUTE, "/dashboard");
+        // 不安全的参数（不是 / 开头），sanitizer 返回 null，调用应当清空会话
+        request.setParameter("returnTo", "https://evil.example/");
+
+        service.rememberReturnTo(request);
+
+        HttpSession session = request.getSession(false);
+        assertThat(session).isNotNull();
+        assertThat(session.getAttribute(OAuthLoginRedirectSupport.SESSION_RETURN_TO_ATTRIBUTE)).isNull();
+    }
+
+    @Test
     void resolveFailureRedirect_maps_access_denied_to_user_facing_page() {
         OAuthLoginFlowService service = new OAuthLoginFlowService(
                 List.of(),
