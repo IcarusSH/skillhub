@@ -1,4 +1,4 @@
-.PHONY: build build-backend build-backend-app build-cli build-frontend build-web check clean cli-install db-reset dev dev-all dev-all-down dev-all-reset dev-down dev-logs dev-server dev-server-restart dev-status dev-web docs-build docs-dev docs-preview generate-api help lint-cli lint-web namespace-smoke parallel-down parallel-init parallel-sync parallel-up pr publish-cli publish-cli-major publish-cli-minor staging staging-down staging-logs test test-backend test-backend-app test-cli test-e2e-frontend test-e2e-smoke-frontend test-frontend test-web typecheck-cli typecheck-web validate-release-config web-deps web-install web-install-ci
+.PHONY: build build-backend build-backend-app build-cli build-frontend build-web check clean cli-install db-reset dev dev-all dev-all-down dev-all-reset dev-down dev-logs dev-server dev-server-restart dev-status dev-web docker-build docker-build-server docker-build-web docker-build-scanner docs-build docs-dev docs-preview generate-api help lint-cli lint-web namespace-smoke parallel-down parallel-init parallel-sync parallel-up pr publish-cli publish-cli-major publish-cli-minor staging staging-down staging-logs test test-backend test-backend-app test-cli test-e2e-frontend test-e2e-smoke-frontend test-frontend test-web typecheck-cli typecheck-web validate-release-config web-deps web-install web-install-ci
 
 DEV_DIR := .dev
 DEV_SERVER_PID := $(DEV_DIR)/server.pid
@@ -295,6 +295,20 @@ db-reset: ## 重置数据库
 
 validate-release-config: ## 校验发布环境变量文件（默认 .env.release）
 	./scripts/validate-release-config.sh .env.release
+
+VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
+
+docker-build: ## 用仓库根的 Dockerfile 一键构建 server / web / scanner 三个镜像（VERSION 可由环境变量覆盖）
+	@bash scripts/build-images.sh $(VERSION)
+
+docker-build-server: ## 仅构建 server 镜像
+	@bash scripts/build-images.sh $(VERSION) --services server
+
+docker-build-web: ## 仅构建 web 镜像
+	@bash scripts/build-images.sh $(VERSION) --services web
+
+docker-build-scanner: ## 仅构建 scanner 镜像
+	@bash scripts/build-images.sh $(VERSION) --services scanner
 
 staging: ## 构建并启动 staging 环境，运行 smoke test（混合模式：后端镜像 + 前端静态文件）
 	@echo "=== [1/5] Building backend JAR and Docker image ==="
