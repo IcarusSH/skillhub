@@ -1,4 +1,5 @@
 # ---- Build Stage ----
+# syntax=docker/dockerfile:1.6
 FROM eclipse-temurin:21-jdk-alpine AS build
 
 # 国内 ECS 从 Maven Central 拉依赖常常失败,这里把镜像写进容器,build 一次过。
@@ -6,6 +7,11 @@ FROM eclipse-temurin:21-jdk-alpine AS build
 ARG MAVEN_MIRROR=https://maven.aliyun.com/repository/public
 
 WORKDIR /app
+
+# 把镜像源注入 ~/.m2/settings.xml,这样 ./mvnw 走的也是镜像。
+RUN mkdir -p /root/.m2 && \
+    printf '<settings><mirrors><mirror><id>aliyun</id><url>%s</url><mirrorOf>*</mirrorOf></mirror></mirrors></settings>' \
+        "${MAVEN_MIRROR}" > /root/.m2/settings.xml
 
 # Cache dependencies
 COPY pom.xml .
@@ -19,15 +25,14 @@ COPY skillhub-app/pom.xml skillhub-app/
 COPY mvnw .
 COPY .mvn .mvn
 
-# 把镜像源注入 ~/.m2/settings.xml,这样 ./mvnw 走的也是镜像。
-RUN mkdir -p /root/.m2 && \
-    printf '<settings><mirrors><mirror><id>aliyun</id><url>%s</url><mirrorOf>*</mirrorOf></mirror></mirrors></settings>' \
-        "${MAVEN_MIRROR}" > /root/.m2/settings.xml
-
-RUN ./mvnw dependency:go-offline -B
+# buildkit 缓存挂载:Maven 本地仓库 ~/.m2/repository 跨 build 复用,
+# 第二次 build 增量几十秒而不是几分钟。
+RUN --mount=type=cache,target=/root/.m2/repository,sharing=locked \
+    ./mvnw dependency:go-offline -B
 
 COPY . .
-RUN ./mvnw package -DskipTests -B
+RUN --mount=type=cache,target=/root/.m2/repository,sharing=locked \
+    ./mvnw package -DskipTests -B
 
 # ---- Runtime Stage ----
 FROM eclipse-temurin:21-jre-alpine
