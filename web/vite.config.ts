@@ -28,6 +28,14 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    // vite dev 默认只接受 localhost/127.0.0.1,加上公司域名/IP 才能从外部访问。
+    // 调试阶段若临时想关掉安全检查,改成 allowedHosts: true 即可。
+    allowedHosts: [
+      'skillhub.zhengderl.cn',
+      'localhost',
+      '127.0.0.1',
+      '192.168.1.197',
+    ],
     watch: {
       usePolling: true,
       interval: 150,
