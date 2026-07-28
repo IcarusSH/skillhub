@@ -1,15 +1,19 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 
 const JS_BUILD_TARGET = 'es2020'
 const LEGACY_BROWSER_TARGETS = ['chrome83', 'edge83', 'firefox78', 'safari14']
+
+// 项目是 ESM (`"type": "module"`),__dirname / path 不存在;
+// 用 URL + import.meta.url 拿到当前配置文件所在目录,纯 DOM 类型,不需要 @types/node。
+const configDir = new URL('.', import.meta.url).pathname
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': new URL('./src', import.meta.url).pathname,
     },
   },
   build: {
@@ -22,7 +26,7 @@ export default defineConfig({
     },
   },
   test: {
-    exclude: ['**/node_modules/**', '**/e2e/**'],
+    exclude: ['**/node_modules/**', 'e2e/**'],
     testTimeout: 30000,
     hookTimeout: 30000,
   },
@@ -71,3 +75,6 @@ export default defineConfig({
     },
   },
 })
+
+// 仅用于 IDE / 静态检查; 运行时由 vite.config.ts 主导。
+export const __viteConfigDir = configDir
