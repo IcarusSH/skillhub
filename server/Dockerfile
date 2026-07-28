@@ -1,5 +1,10 @@
 # ---- Build Stage ----
 FROM eclipse-temurin:21-jdk-alpine AS build
+
+# 国内 ECS 从 Maven Central 拉依赖常常失败,这里把镜像写进容器,build 一次过。
+# 海外构建可以 --build-arg MAVEN_MIRROR=https://repo.maven.apache.org/maven2 覆盖回官方。
+ARG MAVEN_MIRROR=https://maven.aliyun.com/repository/public
+
 WORKDIR /app
 
 # Cache dependencies
@@ -13,6 +18,12 @@ COPY skillhub-notification/pom.xml skillhub-notification/
 COPY skillhub-app/pom.xml skillhub-app/
 COPY mvnw .
 COPY .mvn .mvn
+
+# 把镜像源注入 ~/.m2/settings.xml,这样 ./mvnw 走的也是镜像。
+RUN mkdir -p /root/.m2 && \
+    printf '<settings><mirrors><mirror><id>aliyun</id><url>%s</url><mirrorOf>*</mirrorOf></mirror></mirrors></settings>' \
+        "${MAVEN_MIRROR}" > /root/.m2/settings.xml
+
 RUN ./mvnw dependency:go-offline -B
 
 COPY . .

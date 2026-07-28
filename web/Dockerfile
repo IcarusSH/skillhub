@@ -1,8 +1,13 @@
 FROM node:22-alpine AS build
 RUN corepack enable
+
+# 国内 ECS 拉 npm 慢,默认走 npmmirror,海外构建可以 --build-arg NPM_REGISTRY 覆盖。
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm config set registry "${NPM_REGISTRY}" && \
+    pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 
