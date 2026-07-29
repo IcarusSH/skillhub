@@ -79,7 +79,7 @@ spring:
             # /oauth2/authorization and /login/oauth2/code steps. The value
             # below MUST be added verbatim to the application's Redirect URLs
             # list on the Casdoor side.
-            redirect-uri: "http://192.168.1.197:8080/login/oauth2/code/casdoor"
+            redirect-uri: "${SKILLHUB_PUBLIC_BASE_URL:http://skillhub.zhengderl.cn}/login/oauth2/code/casdoor"
             client-name: 钉钉 SSO
             authorization-grant-type: authorization_code
         provider:
