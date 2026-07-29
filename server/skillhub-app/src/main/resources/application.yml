@@ -93,10 +93,14 @@ spring:
             # is required so Spring Security can verify the id_token
             # signature during the OIDC code-exchange callback; without it
             # the login fails with "missing_signature_verifier".
-            authorization-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/login/oauth/authorize
-            token-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/login/oauth/access_token
-            user-info-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/userinfo
-            jwk-set-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/.well-known/jwks
+            # authorization-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/login/oauth/authorize
+            # token-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/login/oauth/access_token
+            # user-info-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/api/userinfo
+            # jwk-set-uri: ${CASDOOR_SERVER_URL:https://casdoor-ji95.onrender.com}/.well-known/jwks
+            authorization-uri: ${CASDOOR_SERVER_URL:https://sso.zhengderl.cn}/login/oauth/authorize
+            token-uri: ${CASDOOR_SERVER_URL:http://sso.zhengderl.cn}/api/login/oauth/access_token
+            user-info-uri: ${CASDOOR_SERVER_URL:http://sso.zhengderl.cn}/api/userinfo
+            jwk-set-uri: ${CASDOOR_SERVER_URL:http://sso.zhengderl.cn}/.well-known/jwks
             user-name-attribute: sub
   servlet:
     multipart:
