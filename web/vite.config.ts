@@ -53,6 +53,16 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
+      // OAuth2 dance lands on /login/oauth2/code/<registrationId>; without
+      // this entry the dev / preview servers return the SPA index.html
+      // (because /login/* is otherwise served by Vite as a frontend route)
+      // and the Spring Security callback handler never gets the code to
+      // exchange. Forwarding to the backend lets Spring set SESSION and
+      // redirect back to the SPA via the publicBaseUrl-relative Location.
+      '/login/oauth2/code': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
     },
   },
   // vite preview (production-build preview server) needs its own proxy
@@ -69,6 +79,10 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/oauth2': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/login/oauth2/code': {
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
