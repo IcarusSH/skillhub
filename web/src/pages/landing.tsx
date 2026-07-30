@@ -152,7 +152,7 @@ export function LandingPage() {
         </div>
 
         {/* Stats */}
-        <div ref={statsView.ref} className={`flex flex-row justify-center gap-16 md:gap-24 scroll-fade-up${statsView.inView ? ' in-view' : ''}`} style={{ transitionDelay: '0.15s' }}>
+        {/* <div ref={statsView.ref} className={`flex flex-row justify-center gap-16 md:gap-24 scroll-fade-up${statsView.inView ? ' in-view' : ''}`} style={{ transitionDelay: '0.15s' }}>
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col items-center">
               <span className="text-3xl md:text-4xl font-bold tracking-tight text-brand-gradient mb-1">
@@ -163,7 +163,7 @@ export function LandingPage() {
               </span>
             </div>
           ))}
-        </div>
+        </div> */}
       </main>
 
       {/* Features Section */}

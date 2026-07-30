@@ -34,11 +34,11 @@ export function LegalDocument({
           <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground">{summary}</p>
           <p className="text-sm text-muted-foreground">{lastUpdated}</p>
         </div>
-        {note ? (
+        {/* {note ? (
           <div className="rounded-2xl border border-border/60 bg-card/60 px-5 py-4 text-sm leading-6 text-muted-foreground">
             {note}
           </div>
-        ) : null}
+        ) : null} */}
       </div>
 
       <div className="space-y-4">
