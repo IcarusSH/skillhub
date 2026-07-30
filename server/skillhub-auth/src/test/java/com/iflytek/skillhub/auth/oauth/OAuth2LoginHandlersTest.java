@@ -103,6 +103,45 @@ class OAuth2LoginHandlersTest {
         assertThat(response.getRedirectedUrl()).isEqualTo("/dashboard");
     }
 
+    /**
+     * Regression test: when the OAuth2 dance bounces back to {@code /login} as the
+     * return target (typically because a {@code requireAuth} guard fired on
+     * {@code /login} before it was added to the public-route list, or because an
+     * older SPA bundle hard-coded {@code returnTo=/login}), the success handler
+     * must treat that as "no return target" and fall through to the configured
+     * default — otherwise the user ends up logged in but stuck on the login page.
+     */
+    @Test
+    void successHandler_ignoresLoginSelfReturnTo() throws Exception {
+        OAuthLoginFlowService oauthLoginFlowService = mock(OAuthLoginFlowService.class);
+        OAuth2LoginSuccessHandler handler = new OAuth2LoginSuccessHandler(
+                new com.iflytek.skillhub.auth.session.PlatformSessionService(),
+                oauthLoginFlowService,
+                ""
+        );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        // session already has /login as returnTo before the callback arrives
+        request.getSession(true).setAttribute(
+                OAuthLoginRedirectSupport.SESSION_RETURN_TO_ATTRIBUTE, "/login");
+
+        var principal = new com.iflytek.skillhub.auth.rbac.PlatformPrincipal(
+                "user-1", "User", "user@example.com", null, "github", Set.of()
+        );
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                new DefaultOAuth2User(List.of(), Map.of("platformPrincipal", principal, "login", "user"), "login"),
+                null,
+                List.of()
+        );
+        org.mockito.Mockito.when(oauthLoginFlowService.consumeReturnTo(org.mockito.ArgumentMatchers.any()))
+                .thenReturn("/login");
+
+        handler.onAuthenticationSuccess(request, response, authentication);
+
+        // /login must NOT be the redirect target — the configured default kicks in instead
+        assertThat(response.getRedirectedUrl()).isEqualTo("/dashboard");
+    }
+
     @Test
     void failureHandler_redirectsBackToLoginWithReturnTo() throws Exception {
         OAuthLoginFlowService oauthLoginFlowService = mock(OAuthLoginFlowService.class);
