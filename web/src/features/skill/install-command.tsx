@@ -84,7 +84,11 @@ export function InstallCommand({ namespace, slug }: InstallCommandProps) {
   const { t } = useTranslation()
   const baseUrl = useMemo(() => getBaseUrl(), [])
   const clawhubCommand = useMemo(() => buildInstallCommand(namespace, slug, baseUrl), [baseUrl, namespace, slug])
-  const skillhubCommand = useMemo(() => buildSkillhubInstallCommand(namespace, slug, baseUrl), [baseUrl, namespace, slug])
+  // ZDSkillHub CLI install method is intentionally hidden from the UI for now
+  // (see https://... — TBD). The buildSkillhubInstallCommand helper stays
+  // exported so the existing test suite continues to exercise it; only the
+  // tab trigger / content pair and the derived command memo are gated.
+  // const skillhubCommand = useMemo(() => buildSkillhubInstallCommand(namespace, slug, baseUrl), [baseUrl, namespace, slug])
 
   return (
     <Tabs defaultValue="clawhub" className="space-y-3">
@@ -92,16 +96,20 @@ export function InstallCommand({ namespace, slug }: InstallCommandProps) {
         <TabsTrigger value="clawhub" className={installMethodTabTriggerClass}>
           {t('skillDetail.installMethodClawhub')}
         </TabsTrigger>
+        {/* ZDSkillHub CLI tab disabled — see comment above.
         <TabsTrigger value="skillhub" className={installMethodTabTriggerClass}>
           {t('skillDetail.installMethodSkillhub')}
         </TabsTrigger>
+        */}
       </TabsList>
       <TabsContent value="clawhub">
         <CommandBlock command={clawhubCommand} />
       </TabsContent>
+      {/* ZDSkillHub CLI content disabled — see comment above.
       <TabsContent value="skillhub">
         <CommandBlock command={skillhubCommand} />
       </TabsContent>
+      */}
     </Tabs>
   )
 }

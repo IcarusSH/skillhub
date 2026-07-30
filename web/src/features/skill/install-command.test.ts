@@ -134,7 +134,10 @@ describe('install-command', () => {
     }))
 
     expect(html).toContain('skillDetail.installMethodClawhub')
-    expect(html).toContain('skillDetail.installMethodSkillhub')
+    // ZDSkillHub CLI tab is intentionally hidden from the UI — its i18n key
+    // must not appear in the rendered markup. The buildSkillhubInstallCommand
+    // helper is still exported and exercised by the unit tests above.
+    expect(html).not.toContain('skillDetail.installMethodSkillhub')
     expect(html).toContain('aria-selected="true"')
     expect(html).toContain('npx clawhub install team-alpha--meeting-minutes-generator --registry https://app.example.com')
     expect(html).not.toContain('npx @astron-team/skillhub@latest install meeting-minutes-generator --namespace team-alpha --registry https://app.example.com')
